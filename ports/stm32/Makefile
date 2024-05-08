@@ -41,6 +41,9 @@ FROZEN_MANIFEST ?= boards/manifest.py
 # Used by machine.bootloader().
 MBOOT_TEXT0_ADDR ?= 0x08000000
 
+# Disable TINY TTF, since build fails on stm32
+CFLAGS_EXTMOD += -DLV_USE_TINY_TTF=0
+
 # include py core make definitions
 include $(TOP)/py/py.mk
 include $(TOP)/extmod/extmod.mk
@@ -307,6 +310,7 @@ HAL_SRC_C += $(addprefix $(STM32LIB_HAL_BASE)/Src/stm32$(MCU_SERIES)xx_,\
 	hal_adc_ex.c \
 	hal_cortex.c \
 	hal_dma.c \
+	hal_dma2d.c \
 	hal_flash.c \
 	hal_flash_ex.c \
 	hal_gpio.c \
@@ -321,6 +325,7 @@ HAL_SRC_C += $(addprefix $(STM32LIB_HAL_BASE)/Src/stm32$(MCU_SERIES)xx_,\
 	hal_tim.c \
 	hal_tim_ex.c \
 	hal_uart.c \
+	hal_ltdc.c \
 	ll_rcc.c \
 	ll_utils.c \
 	)
@@ -421,6 +426,19 @@ MICROPY_BLUETOOTH_BTSTACK_H4 ?= 1
 endif
 
 endif # MICROPY_PY_BLUETOOTH
+
+ifeq ($(MICROPY_PY_LVGL),1)
+CFLAGS += -DMICROPY_PY_LVGL
+LIB_SRC_C += $(shell find $(LVGL_BINDING_DIR)/driver/stm32/$(BOARD)/*.c)
+#LIB_SRC_C += $(shell find $(LVGL_BINDING_DIR)/driver/stm32/string1.c)
+ifeq ($(MCU_SERIES),$(filter $(MCU_SERIES),f7))
+HAL_SRC += $(addprefix $(HAL_DIR)/Src/stm32$(MCU_SERIES)xx_,\
+	hal_ltdc.c \
+	hal_ltdc_ex.c \
+	hal_dma2d.c \
+	)
+endif
+endif
 
 # Add stm32-specific implementation of libmetal (and optionally OpenAMP's rproc).
 # Note: libmetal code is generated via a pre-processor so ensure that runs first.
@@ -591,7 +609,7 @@ $(BUILD)/firmware.elf: $(OBJ)
 	$(call GENERATE_ELF,$@,$^)
 
 # List of sources for qstr extraction
-SRC_QSTR += $(SRC_C) $(SRC_CXX) $(SHARED_SRC_C) $(GEN_PINS_SRC)
+SRC_QSTR += $(SRC_C) $(SRC_CXX) $(SHARED_SRC_C) $(GEN_PINS_SRC) $(LIB_SRC_C)
 
 # Making OBJ use an order-only dependency on the generated pins.h file
 # has the side effect of making the pins.h file before we actually compile

@@ -73,8 +73,8 @@
 #define MICROPY_PERSISTENT_CODE_LOAD   (1)
 
 // Extra memory debugging.
-#define MICROPY_MALLOC_USES_ALLOCATED_SIZE (1)
-#define MICROPY_MEM_STATS              (1)
+#define MICROPY_MALLOC_USES_ALLOCATED_SIZE (0)
+#define MICROPY_MEM_STATS              (0)
 
 // Enable a small performance boost for the VM.
 #define MICROPY_OPT_COMPUTED_GOTO      (1)
@@ -122,3 +122,8 @@
 #define MICROPY_PY_MACHINE             (1)
 #define MICROPY_PY_MACHINE_PULSE       (1)
 #define MICROPY_PY_MACHINE_PIN_BASE    (1)
+
+// Required for LVGL
+#define MICROPY_ENABLE_SCHEDULER       (1)
+#define MICROPY_MODULE_BUILTIN_INIT    (1)
+#define MICROPY_PY_SYS_SETTRACE        (0)

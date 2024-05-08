@@ -185,6 +185,7 @@ function ci_webassembly_setup {
 
 function ci_webassembly_build {
     source emsdk/emsdk_env.sh
+    git submodule update --init --recursive lib/lv_bindings
     make ${MAKEOPTS} -C ports/webassembly VARIANT=pyscript submodules
     make ${MAKEOPTS} -C ports/webassembly VARIANT=pyscript
 }

@@ -52,10 +52,11 @@
 #define MICROPY_ENABLE_FINALISER    (1)
 #define MICROPY_ENABLE_PYSTACK      (1)
 #define MICROPY_STACK_CHECK         (1)
-#define MICROPY_MALLOC_USES_ALLOCATED_SIZE (1)
-#define MICROPY_MEM_STATS           (1)
+#define MICROPY_MALLOC_USES_ALLOCATED_SIZE (0)
+#define MICROPY_MEM_STATS           (0)
 #define MICROPY_DEBUG_PRINTER       (&mp_stderr_print)
 #define MICROPY_DEBUG_PRINTERS      (1)
+#define MICROPY_ENABLE_SCHEDULER    (1)
 #define MICROPY_READER_POSIX        (1)
 #define MICROPY_READER_VFS          (1)
 #define MICROPY_HELPER_REPL         (1)
@@ -166,6 +167,12 @@
 #define MICROPY_ERROR_PRINTER       (&mp_stderr_print)
 #define MICROPY_WARNINGS            (1)
 #define MICROPY_PY_STR_BYTES_CMP_WARN (1)
+//use large block for GC to increase speed of allocate, but consume more memory
+#define MICROPY_BYTES_PER_GC_BLOCK (64 * BYTES_PER_WORD)
+
+
+// VFS stat functions should return time values relative to 1970/1/1
+#define MICROPY_EPOCH_IS_1970       (1)
 
 // VFS stat functions should return time values relative to 1970/1/1
 #define MICROPY_EPOCH_IS_1970       (1)
@@ -183,6 +190,36 @@ extern const struct _mp_print_t mp_stderr_print;
 
 #define MICROPY_PORT_INIT_FUNC      init()
 #define MICROPY_PORT_DEINIT_FUNC    deinit()
+
+//LVGL binding relative
+#define MICROPY_PY_LVGL             (1)
+#define MICROPY_PY_LVGL_SDL         (1)
+
+extern const struct _mp_obj_module_t mp_module_machine;
+extern const struct _mp_obj_module_t mp_module_os;
+extern const struct _mp_obj_module_t mp_module_uos_vfs;
+extern const struct _mp_obj_module_t mp_module_lvgl;
+extern const struct _mp_obj_module_t mp_module_lvindev;
+extern const struct _mp_obj_module_t mp_module_SDL;
+
+#if MICROPY_PY_LVGL
+#ifndef MICROPY_INCLUDED_PY_MPSTATE_H
+#define MICROPY_INCLUDED_PY_MPSTATE_H
+#include "lib/lv_bindings/lvgl/src/misc/lv_gc.h"
+#undef MICROPY_INCLUDED_PY_MPSTATE_H
+#else
+#include "lib/lv_bindings/lvgl/src/misc/lv_gc.h"
+#endif
+#define MICROPY_PY_LVGL_DEF { MP_OBJ_NEW_QSTR(MP_QSTR_lvgl), (mp_obj_t)&mp_module_lvgl },
+    #if MICROPY_PY_LVGL_SDL
+    #define MICROPY_PY_LVGL_SDL_DEF { MP_OBJ_NEW_QSTR(MP_QSTR_SDL), (mp_obj_t)&mp_module_SDL },
+    #else
+    #define MICROPY_PY_LVGL_SDL_DEF
+    #endif
+#else
+    #define LV_ROOTS
+    #define MICROPY_PY_LVGL_DEF
+#endif
 
 // type definitions for the specific machine
 

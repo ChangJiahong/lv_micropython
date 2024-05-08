@@ -34,6 +34,8 @@
 #include "pico/multicore.h"
 #include "mpconfigboard.h"
 
+#define MICROPY_PY_LVGL                         (1)
+
 // Board and hardware specific configuration
 #define MICROPY_HW_MCU_NAME                     "RP2040"
 #ifndef MICROPY_HW_ENABLE_UART_REPL
