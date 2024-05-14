@@ -67,3 +67,11 @@ ports/javascript/node_modules
 
 # MacOS desktop metadata files
 .DS_Store
+/.idea/.gitignore
+/ports/esp32/.idea/.gitignore
+/ports/esp32/.idea/.name
+/.idea/lv_micropython.iml
+/ports/esp32/.idea/misc.xml
+/.idea/modules.xml
+/.idea/vcs.xml
+/ports/esp32/.idea/vcs.xml

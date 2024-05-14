@@ -139,6 +139,9 @@ list(APPEND IDF_COMPONENTS
     spi_flash
     ulp
     vfs
+    esp_http_client
+        esp-tls
+        xtensa
 )
 
 # Register the main IDF component.

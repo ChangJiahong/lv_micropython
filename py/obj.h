@@ -34,6 +34,8 @@
 #include "py/mpprint.h"
 #include "py/runtime0.h"
 
+#define STATIC static
+
 // This is the definition of the opaque MicroPython object type.
 // All concrete objects have an encoding within this type and the
 // particular encoding is specified by MICROPY_OBJ_REPR.
